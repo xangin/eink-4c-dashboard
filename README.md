@@ -137,7 +137,24 @@ time:
 
 由於預設是顯示取得每小時的預報，**請先確認目前用的天氣整合有支援小時預報 (內建的met.no有)**
 
-以下YAML表示每小時的1分將會呼叫取得"每小時"的天氣預報服務，同時更新內容在sensor.eink_sensors裡面
+以下YAML表示每小時的10分將會呼叫取得"每小時"的天氣預報服務，同時更新內容在sensor.eink_sensors裡面
+
+```YAML
+  - trigger:
+      # 每小時的10分更新一次
+      - platform: time_pattern     
+        hours: "/1" 
+        minutes: 10 
+    action:
+      - action: weather.get_forecasts
+        target:
+          entity_id: weather.myhome #REPLACE with your weather entity id   
+        data:
+          type: hourly
+        response_variable: hourly     
+      - variables:
+          hourly_forecasts: "{{ hourly['weather.YOUR_WEATHER_ID'].forecast }}"
+```
 
 要注意更新面板的時機要在更新天氣預報之後，不然都會看到前一個小時的預報
 
@@ -153,12 +170,29 @@ time:
 
 ### 取得行事曆:
 
-以下YAML表示每小時的2分將會呼叫取得最近7日的行事曆，同時更新內容在sensor.upcoming_calendar_events裡面
+以下YAML表示每小時的5分將會呼叫取得最近7日的行事曆，同時更新內容在sensor.upcoming_calendar_events裡面
+
+```YAML
+  - trigger:
+      - platform: time_pattern
+        hours: "/1"  # 每小時的5分更新一次
+        minutes: 5
+    action:
+      - action: calendar.get_events
+        target:
+          entity_id: calendar.sfcasa
+        data:
+          end_date_time: "{{ (now() + timedelta(days=7)).isoformat() }}"  # 取得未來 7 天的事件
+        response_variable: agenda
+      - variables:
+          my_events: >
+            {{ agenda["calendar.YOUR_CANLENDAR_ID"].events }} 
+```
 
 要注意更新面板的時機要在更新之後，不然都會看到前一個小時的內容
 
 `attributes`是將要使用的資訊從天氣預報拆分成出來，分別是:
 - 最近四筆行事曆的日期:  `events_date_1`, `events_date_2`, `events_date_3`, `events_date_4`
-- 最近四筆行事曆的時間:  `forecast_condition_1`, `forecast_condition_2`, `forecast_condition_3`, `forecast_condition_4`
-- 最近四筆行事曆的內容:  `forecast_temperature_1`, `forecast_temperature_2`, `forecast_temperature_3`, `forecast_temperature_4`
+- 最近四筆行事曆的時間:  `events_time_1`, `events_time_2`, `events_time_3`, `events_time_4`
+- 最近四筆行事曆的標題:  `events_title_1`, `events_title_2`, `events_title_3`, `events_title_4`
 
