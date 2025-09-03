@@ -1,0 +1,648 @@
+substitutions:
+  devicename: eink-4c-dashboard
+  upper_devicename: "Eink 4C DashBoard"
+
+esphome:
+  name: ${devicename}
+  friendly_name: ${upper_devicename}
+  comment: ${upper_devicename}
+  platformio_options:
+    build_flags: "-DBOARD_HAS_PSRAM"
+    board_build.arduino.memory_type: qio_opi
+    board_build.flash_mode: dio  
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+    version: recommended
+  flash_size: 16MB
+
+psram:
+  mode: octal #8MB
+  speed: 80MHz
+
+external_components:
+  - source: github://tsunglung/esphome_epaper
+    components: [ display, waveshare_epaper ]
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  #ap:
+  #  ssid: ${devicename}
+  #  password: "12345678"
+
+#captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  reboot_timeout: 0s
+
+ota:
+  - platform: esphome
+
+light:
+  - platform: esp32_rmt_led_strip
+    name: "RGB LED"
+    rgb_order: GRB
+    pin: GPIO48
+    num_leds: 1
+    chipset: ws2812
+
+
+font:
+
+  - file: 'fonts/GothamRnd-Bold.ttf'
+    id: font_year
+    size: 47
+    glyphs:
+      ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+  - file: 'fonts/GothamRnd-Book.ttf'
+    id: font_month
+    size: 75
+    glyphs:
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
+       'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
+       'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+       'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
+       's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+  - file: 'fonts/GothamRnd-Book.ttf'
+    id: font_day
+    size: 110
+    glyphs:
+      ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+  - file: 'fonts/GothamRnd-Bold.ttf'
+    id: font_weekday
+    size: 40
+    glyphs:
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
+       'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
+       'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+       'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
+       's', 't', 'u', 'v', 'w', 'x', 'y', 'z', ' ']
+
+  - file: 'fonts/materialdesignicons-7296.ttf'
+    id: icon_today
+    size: 170
+    glyphs: &mdi-weather-glyphs
+      - "\U000F0590" # mdi-weather-cloudy
+      - "\U000F0F2F" # mdi-weather-cloudy-alert
+      - "\U000F0E6E" # mdi-weather-cloudy-arrow-right
+      - "\U000F0591" # mdi-weather-fog
+      - "\U000F0592" # mdi-weather-hail
+      - "\U000F0F30" # mdi-weather-hazy
+      - "\U000F0898" # mdi-weather-hurricane
+      - "\U000F0593" # mdi-weather-lightning
+      - "\U000F067E" # mdi-weather-lightning-rainy
+      - "\U000F0594" # mdi-weather-night
+      - "\U000F0F31" # mdi-weather-night-partly-cloudy
+      - "\U000F0595" # mdi-weather-partly-cloudy
+      - "\U000F0F32" # mdi-weather-partly-lightning
+      - "\U000F0F33" # mdi-weather-partly-rainy
+      - "\U000F0F34" # mdi-weather-partly-snowy
+      - "\U000F0F35" # mdi-weather-partly-snowy-rainy
+      - "\U000F0596" # mdi-weather-pouring
+      - "\U000F0597" # mdi-weather-rainy
+      - "\U000F0598" # mdi-weather-snowy
+      - "\U000F0F36" # mdi-weather-snowy-heavy
+      - "\U000F067F" # mdi-weather-snowy-rainy
+      - "\U000F0599" # mdi-weather-sunny
+      - "\U000F0F37" # mdi-weather-sunny-alert
+      - "\U000F14E4" # mdi-weather-sunny-off
+      - "\U000F059A" # mdi-weather-sunset
+      - "\U000F059B" # mdi-weather-sunset-down
+      - "\U000F059C" # mdi-weather-sunset-up
+      - "\U000F0F38" # mdi-weather-tornado
+      - "\U000F059D" # mdi-weather-windy
+      - "\U000F059E" # mdi-weather-windy-variant
+
+  #today temp, precipitation, forecast time & temp
+  - file: 'fonts/GothamRnd-Bold.ttf'
+    id: font_medium_bold
+    size: 29
+    glyphs: '°C0123456789%AMP'
+
+  #forecast icon
+  - file: 'fonts/materialdesignicons-7296.ttf'
+    id: icon_forecast
+    size: 70
+    glyphs: *mdi-weather-glyphs
+ 
+  #calendar day
+  - file: 'fonts/GenJyuuGothic-Regular.ttf'
+    id: font_cal_day
+    size: 28
+    glyphs: '0123456789 '
+
+  #event title
+  - file: 'fonts/NotoSansTC-Medium.ttf'
+    id: font_event
+    size: 25
+    glyphs:
+      #- !include fonts/jf3500_char.yaml
+      - !include fonts/jf7000_noto_characters.yaml
+
+  #event date
+  - file: 'fonts/GothamRnd-Book.ttf' #GenJyuuGothic-Regular.ttf'
+    id: font_event_date
+    size: 28
+    glyphs: '0123456789 /:'
+
+  #update time
+  - file: 'fonts/GothamRnd-Book.ttf'
+    id: font_update
+    size: 14
+    glyphs: '0123456789/ :'
+
+#Include Background
+image:
+  - file: "bg_4c.png"
+    id: eink_pannel
+    type: RGB565
+
+binary_sensor:
+  - platform: status
+    name: "WiFi Status"
+    id: wifistatus 
+
+  - platform: homeassistant
+    id: eink_refresh_time
+    entity_id: binary_sensor.eink_refresh_time
+
+  - platform: homeassistant
+    id: lastnight_nobody_home
+    entity_id: input_boolean.lastnight_nobody_home
+
+button:
+  - platform: restart
+    name: "Restart"
+
+  - platform: template
+    name: 'Screen Refresh'
+    icon: 'mdi:update'
+    on_press:
+      then:
+        - component.update: 'my_display'
+    internal: false
+
+
+color:
+  - id: color_white
+    red: 100%
+    green: 100%
+    blue: 100%
+  - id: color_red
+    red: 100%
+    green: 0%
+    blue: 0%
+  - id: color_yellow
+    red: 100%
+    green: 100%
+    blue: 0%
+  - id: color_black
+    red: 0%
+    green: 0%
+    blue: 0%
+
+
+sensor:
+  - platform: internal_temperature
+    name: "ESP Temperature"
+
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    id: wifisignal
+    update_interval: 60s
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    id: events_count
+
+text_sensor:
+  - platform: version
+    name: "ESPHome Version"
+
+  - platform: wifi_info
+    ip_address:
+      name: "IP Address"
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    id: today_weather
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: today_temperature
+    id: today_temperature
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: today_precipitation
+    id: today_precipitation
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_weekday_1
+    id: forecast_weekday_1
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_condition_1
+    id: forecast_weather_1
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_temperature_1
+    id: forecast_temperature_1
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_weekday_2
+    id: forecast_weekday_2
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_condition_2
+    id: forecast_weather_2
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_temperature_2
+    id: forecast_temperature_2
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_weekday_3
+    id: forecast_weekday_3
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_condition_3
+    id: forecast_weather_3
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_temperature_3
+    id: forecast_temperature_3
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_weekday_4
+    id: forecast_weekday_4
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_condition_4
+    id: forecast_weather_4
+
+  - platform: homeassistant
+    entity_id: sensor.eink_sensors
+    attribute: forecast_temperature_4
+    id: forecast_temperature_4
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_date_1
+    id: events_date_1
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_date_2
+    id: events_date_2
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_date_3
+    id: events_date_3
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_date_4
+    id: events_date_4
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_time_1
+    id: events_time_1
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_time_2
+    id: events_time_2
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_time_3
+    id: events_time_3
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_time_4
+    id: events_time_4
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_title_1
+    id: events_title_1
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_title_2
+    id: events_title_2
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_title_3
+    id: events_title_3
+
+  - platform: homeassistant
+    entity_id: sensor.upcoming_calendar_events
+    attribute: events_title_4
+    id: events_title_4
+
+time:
+  - platform: homeassistant
+    id: ha_time
+    on_time: 
+      seconds: 0
+      minutes: 15
+      hours: "/1"
+      then: 
+        - if:
+            condition:
+              and:
+                - binary_sensor.is_on: eink_refresh_time
+                - binary_sensor.is_off: lastnight_nobody_home
+            then:      
+              - component.update: 'my_display'            
+      
+
+spi:
+  clk_pin: GPIO10
+  mosi_pin: GPIO9
+
+# Now render everything on the ePaper screen.
+display:
+  - platform: waveshare_epaper
+    cs_pin: GPIO11  
+    dc_pin: GPIO12   
+    busy_pin:
+      number: GPIO14   
+      inverted: True
+    reset_pin: GPIO13
+    model: 7.5in-w21-gooddisplay
+    full_update_every: 10
+    reset_duration: 10ms
+    update_interval: never
+    id: my_display
+    rotation: 270°
+    lambda: |-
+    
+      //background
+      it.image(0, 0, id(eink_pannel)); 
+      
+      //************************ TODAY ************************
+
+        // year
+        it.strftime(20, 47, id(font_year), id(color_white), TextAlign::TOP_LEFT, "%Y", id(ha_time).now());
+
+        // month
+        it.strftime(320, 45, id(font_month), id(color_white), TextAlign::TOP_RIGHT, "%b", id(ha_time).now());
+
+        // day
+        it.strftime(322, 50, id(font_day), id(color_red), TextAlign::TOP_LEFT, "%d", id(ha_time).now());
+
+        // weekday
+        it.strftime(310, 117, id(font_weekday), id(color_yellow), TextAlign::TOP_RIGHT, "%A", id(ha_time).now());
+
+      //************************ TODAY WEATHER ************************
+      if (id(today_weather).has_state()) {
+        // Map weather states to MDI characters.
+        std::map<std::string, std::string> weather_icon_map
+          {
+            {"cloudy", "\U000F0590"},
+            {"cloudy-alert", "\U000F0F2F"},
+            {"cloudy-arrow-right", "\U000F0E6E"},
+            {"fog", "\U000F0591"},
+            {"hail", "\U000F0592"},
+            {"hazy", "\U000F0F30"},
+            {"hurricane", "\U000F0898"},
+            {"lightning", "\U000F0593"},
+            {"lightning-rainy", "\U000F067E"},
+            {"night", "\U000F0594"},
+            {"clear-night", "\U000F0594"},
+            {"night-partly-cloudy", "\U000F0F31"},
+            {"partlycloudy", "\U000F0595"},
+            {"partly-lightning", "\U000F0F32"},
+            {"partly-rainy", "\U000F0F33"},
+            {"partly-snowy", "\U000F0F34"},
+            {"partly-snowy-rainy", "\U000F0F35"},
+            {"pouring", "\U000F0596"},
+            {"rainy", "\U000F0597"},
+            {"snowy", "\U000F0598"},
+            {"snowy-heavy", "\U000F0F36"},
+            {"snowy-rainy", "\U000F067F"},
+            {"sunny", "\U000F0599"},
+            {"sunny-alert", "\U000F0F37"},
+            {"sunny-off", "\U000F14E4"},
+            {"sunset", "\U000F059A"},
+            {"sunset-down", "\U000F059B"},
+            {"sunset-up", "\U000F059C"},
+            {"tornado", "\U000F0F38"},
+            {"windy", "\U000F059D"},
+            {"windy-variant", "\U000F059E"},
+          };
+
+        char temp[256];
+
+        // icon
+        it.printf(30, 190, id(icon_today), id(color_black), TextAlign::TOP_LEFT, "%s", weather_icon_map[id(today_weather).state.c_str()].c_str());
+        
+        // temp
+        if (atoi(id(today_temperature).state.c_str()) >= 30)
+        {
+          it.printf(30, 355, id(font_medium_bold), id(color_red), TextAlign::TOP_LEFT, "%s", id(today_temperature).state.c_str());
+        }else{
+          it.printf(30, 355, id(font_medium_bold), id(color_black), TextAlign::TOP_LEFT, "%s", id(today_temperature).state.c_str());
+        }
+        // precipitation
+        if (atoi(id(today_precipitation).state.c_str()) > 50)
+          it.printf(146, 355, id(font_medium_bold), id(color_red), TextAlign::TOP_LEFT, "%s", id(today_precipitation).state.c_str());
+        else
+          it.printf(146, 355, id(font_medium_bold), id(color_black), TextAlign::TOP_LEFT, "%s", id(today_precipitation).state.c_str());
+
+        //************************ FORECAST ************************
+        int forecast_gap=75;
+
+        // HOUR1
+        // time
+        it.printf(100, 445, id(font_medium_bold), id(color_black), TextAlign::TOP_LEFT, "%s", id(forecast_weekday_1).state.c_str());
+        // icon
+        it.printf(10, 435, id(icon_forecast), id(color_black), TextAlign::TOP_LEFT, "%s", weather_icon_map[id(forecast_weather_1).state.c_str()].c_str());
+        // temperature
+        if (atoi(id(forecast_temperature_1).state.c_str()) >= 30)
+          it.printf(100, 475, id(font_medium_bold), id(color_red), TextAlign::TOP_LEFT, "%s", id(forecast_temperature_1).state.c_str());
+        else
+          it.printf(100, 475, id(font_medium_bold), id(color_black), TextAlign::TOP_LEFT, "%s", id(forecast_temperature_1).state.c_str());
+
+        // HOUR2
+        // time
+        it.printf(100, 442+forecast_gap*1, id(font_medium_bold), id(color_black), TextAlign::TOP_LEFT, "%s", id(forecast_weekday_2).state.c_str());
+        // icon
+        it.printf(10, 435+forecast_gap*1, id(icon_forecast), id(color_black), TextAlign::TOP_LEFT, "%s", weather_icon_map[id(forecast_weather_2).state.c_str()].c_str());
+        // temperature
+        if (atoi(id(forecast_temperature_2).state.c_str()) >= 30)
+          it.printf(100, 472+forecast_gap*1, id(font_medium_bold), id(color_red), TextAlign::TOP_LEFT, "%s", id(forecast_temperature_2).state.c_str());
+        else
+          it.printf(100, 472+forecast_gap*1, id(font_medium_bold), id(color_black), TextAlign::TOP_LEFT, "%s", id(forecast_temperature_2).state.c_str());
+
+        // HOUR3
+        // time
+        it.printf(100, 442+forecast_gap*2, id(font_medium_bold), id(color_black), TextAlign::TOP_LEFT, "%s", id(forecast_weekday_3).state.c_str());
+        // icon
+        it.printf(10, 435+forecast_gap*2, id(icon_forecast), id(color_black), TextAlign::TOP_LEFT, "%s", weather_icon_map[id(forecast_weather_3).state.c_str()].c_str());
+        // temperature
+        if (atoi(id(forecast_temperature_3).state.c_str()) >= 30)
+          it.printf(100, 472+forecast_gap*2, id(font_medium_bold), id(color_red), TextAlign::TOP_LEFT, "%s", id(forecast_temperature_3).state.c_str());
+        else
+          it.printf(100, 472+forecast_gap*2, id(font_medium_bold), id(color_black), TextAlign::TOP_LEFT, "%s", id(forecast_temperature_3).state.c_str());
+
+        // HOUR4
+        // time
+        it.printf(100, 442+forecast_gap*3, id(font_medium_bold), id(color_black), TextAlign::TOP_LEFT, "%s", id(forecast_weekday_4).state.c_str());
+        // icon
+        it.printf(10, 435+forecast_gap*3, id(icon_forecast), id(color_black), TextAlign::TOP_LEFT, "%s", weather_icon_map[id(forecast_weather_4).state.c_str()].c_str());
+        // temperature
+        if (atoi(id(forecast_temperature_4).state.c_str()) >= 30)
+          it.printf(100, 472+forecast_gap*3, id(font_medium_bold), id(color_red), TextAlign::TOP_LEFT, "%s", id(forecast_temperature_4).state.c_str());
+        else
+          it.printf(100, 472+forecast_gap*3, id(font_medium_bold), id(color_black), TextAlign::TOP_LEFT, "%s", id(forecast_temperature_4).state.c_str());
+      }
+      
+      //************************ EVENTS ************************
+
+      if (id(events_count).state>0) {
+      
+        int event_gap=65;
+        int event_title_start_y=535;
+
+        // EVENT1
+        // date
+        it.printf(220, 510, id(font_event_date), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_date_1).state.c_str());
+        // time
+        it.printf(325, 510, id(font_event_date), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_time_1).state.c_str());
+        // title
+        it.printf(240, event_title_start_y, id(font_event), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_title_1).state.c_str());
+
+        // EVENT2
+        // date
+        it.printf(220, 510+event_gap*1, id(font_event_date), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_date_2).state.c_str());
+        // time
+        it.printf(325, 510+event_gap*1, id(font_event_date), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_time_2).state.c_str());
+        // title
+        it.printf(240, event_title_start_y+event_gap*1, id(font_event), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_title_2).state.c_str());
+
+        // EVENT3
+        // date
+        it.printf(220, 510+event_gap*2, id(font_event_date), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_date_3).state.c_str());
+        // time
+        it.printf(325, 510+event_gap*2, id(font_event_date), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_time_3).state.c_str());
+        // title
+        it.printf(240, event_title_start_y+event_gap*2, id(font_event), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_title_3).state.c_str());
+
+        // EVENT4
+        // date
+        it.printf(220, 510+event_gap*3, id(font_event_date), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_date_4).state.c_str());
+        // time
+        it.printf(325, 510+event_gap*3, id(font_event_date), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_time_4).state.c_str());
+        // title
+        it.printf(240, event_title_start_y+event_gap*3, id(font_event), id(color_black), TextAlign::TOP_LEFT, "%s", id(events_title_4).state.c_str());        
+        
+      }else{
+      
+        //NO EVENTS
+        // title
+        it.printf(240, 540, id(font_event), id(color_black), TextAlign::TOP_LEFT, "No events");
+        
+      }//if events
+
+      //************************ CALENDAR ************************
+        using namespace esphome::display;
+        
+          const int origin_x = 235;
+          const int origin_y = 170;
+          const int calendar_width = 241;
+          const int font_size = 27;
+        
+          auto time_now = id(ha_time).now();
+        
+          int year = time_now.year;
+          int month = time_now.month;
+          int today = time_now.day_of_month;
+        
+          // 計算本月第一天是星期幾
+          std::tm first_day = {};
+          first_day.tm_year = year - 1900;
+          first_day.tm_mon = month - 1;
+          first_day.tm_mday = 1;
+          mktime(&first_day);
+          int start_day = first_day.tm_wday;  // 0=Sunday
+        
+          // 本月天數
+          int days_in_month = 31;
+          if (month == 2) {
+            days_in_month = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) ? 29 : 28;
+          } else if (month == 4 || month == 6 || month == 9 || month == 11) {
+            days_in_month = 30;
+          }
+        
+          int row = 0;
+          int col = start_day;
+          int row_spacing = 10;
+
+          for (int d = 1; d <= days_in_month; d++) {
+            int x = origin_x + col * (calendar_width / 7);
+            int y = origin_y + (row + 2) * (font_size + row_spacing);
+
+
+            bool is_today = (d == today);
+            bool is_saturday = (col == 6);
+            bool is_sunday = (col == 0);
+        
+            if (is_today) {
+              int rect_x1 = x;
+              int rect_y1 = y-5;
+              int rect_x2 = calendar_width / 7;   
+              int rect_y2 = font_size+5;
+              it.filled_rectangle(rect_x1, rect_y1, rect_x2, rect_y2, id(color_red));
+              it.printf(x, y, id(font_cal_day), id(color_white), TextAlign::TOP_LEFT, "%2d", d);
+            } else if(is_saturday) {
+              it.printf(x, y, id(font_cal_day), id(color_yellow), TextAlign::TOP_LEFT, "%2d", d);
+            } else if(is_sunday) {
+              it.printf(x, y, id(font_cal_day), id(color_red), TextAlign::TOP_LEFT, "%2d", d);
+            } else {
+              it.printf(x, y, id(font_cal_day), id(color_black), TextAlign::TOP_LEFT, "%2d", d);
+            }
+        
+            col++;
+            if (col >= 7) {
+              col = 0;
+              row++;
+            }
+          }
+
+
+      //last update time
+      it.strftime(5, 785, id(font_update), id(color_black), TextAlign::TOP_LEFT, "%m/%d %H:%M", id(ha_time).now());
+      
+
+          
