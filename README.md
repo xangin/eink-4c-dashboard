@@ -47,7 +47,7 @@
 ## 軟體安裝
 
 1. 將`/fonts`資料夾內的檔案及`eink-4c-dashboard.yaml`放到HA/config/esphome的資料夾內
-2. 將`eink_dashboard_sensor.yaml`放到HA/config/packages內
+2. 將`eink_dashboard_sensor.yaml`放到HA/config/packages內 >> [詳細說明](#ha-template-sensor-說明)
 3. 將`/images`內的`bg_4c.png`放到HA/config/esphome/images的資料夾內
 4. 將`eink-4c-dashboard.yaml`及`eink_dashboard_sensor.yaml`的內容修改成自己HA裡的實體ID，**解說在下方**
 5. HA檢查YAML code有無錯誤
