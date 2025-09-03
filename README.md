@@ -2,7 +2,7 @@
 
 本專案利用 7.5 吋四色電子紙搭配 ESPHome 與 Home Assistant，在指定的時段內固定會自動更新，以顯示天氣預報與行事曆。
 
-<img src="https://i.imgur.com/3Hk3BAW.jpg" width="66%" />
+<img src="readme_img/far_view.jpg" width="66%" />
 
 四色資訊板顯示內容包括:
 - 今天日期
@@ -10,6 +10,8 @@
 - 未來四小時天氣預報
 - 當月月曆
 - 未來一週內最近四筆行事曆(會顯示時間日期與標題)
+
+<img src="readme_img/close_view.jpg" width="66%" />
 
 以下將說明硬體架構、ESPHome yaml code與Home assistant yaml code
 
