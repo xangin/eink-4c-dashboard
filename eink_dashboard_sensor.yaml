@@ -1,0 +1,178 @@
+###########################################################
+##
+##       Weather Forecast Sensors
+##
+###########################################################
+template:
+  - trigger:
+      - platform: time_pattern     
+        hours: "/1" 
+        minutes: 10 
+    action:
+      - action: weather.get_forecasts
+        target:
+          entity_id: weather.YOUR_WEATHER_ID #REPLACE with your weather entity id   
+        data:
+          type: hourly
+        response_variable: hourly     
+      - variables:
+          hourly_forecasts: "{{ hourly['weather.YOUR_WEATHER_ID'].forecast }}" #REPLACE with your weather entity id           
+    sensor: 
+      - name: "eink_sensors"
+        unique_id: eink_sensors 
+          ###### REPLACE with your weather entity id ######   
+        state: >
+          {% set cond_now = states('weather.YOUR_WEATHER_ID') %}
+          {% if states('sun.sun') == 'below_horizon' %}
+              {% if cond_now == 'sunny' %} night {% elif cond_now == 'partlycloudy' %} night-partly-cloudy {% else %} {{ cond_now }} {% endif %}
+          {% else %}
+              {{ cond_now }}
+          {% endif %}
+            
+        attributes: 
+          today_temperature: >
+            {{ hourly_forecasts[0].temperature | round }}°C
+          today_humidity: >
+            {{ hourly_forecasts[0].humidity }}%
+          today_precipitation: >
+            {{ hourly_forecasts[0].precipitation_probability | round }}%        
+          
+          forecast_weekday_1: >
+            {{ as_timestamp(hourly_forecasts[1].datetime) | timestamp_custom('%I') | int }}{{ as_timestamp(hourly_forecasts[1].datetime) | timestamp_custom('%p') }}   
+          forecast_condition_1: >
+            {% set cond0 = hourly_forecasts[1].condition %}
+            {% set next_setting = as_timestamp(state_attr('sun.sun', 'next_setting')) %}
+            {% set next_rising = as_timestamp(state_attr('sun.sun', 'next_rising')) %}
+            {% set cond0_time = as_timestamp(hourly_forecasts[1].datetime)  %}
+            {% if cond0_time < next_rising and next_rising < next_setting %}
+                {% if cond0 == 'sunny' %} night {% elif cond0 == 'partlycloudy' %} night-partly-cloudy {% else %} {{ cond0 }} {% endif %}
+            {% else %}
+                {{ cond0 }}
+            {% endif %}            
+          forecast_temperature_1: >
+            {{ hourly_forecasts[1].temperature | round }}°C
+            
+          forecast_weekday_2: >
+            {{ as_timestamp(hourly_forecasts[2].datetime) | timestamp_custom('%I') | int }}{{ as_timestamp(hourly_forecasts[2].datetime) | timestamp_custom('%p') }}   
+          forecast_condition_2: >
+            {% set cond1 = hourly_forecasts[2].condition %}
+            {% set next_setting = as_timestamp(state_attr('sun.sun', 'next_setting')) %}
+            {% set next_rising = as_timestamp(state_attr('sun.sun', 'next_rising')) %}
+            {% set cond1_time = as_timestamp(hourly_forecasts[2].datetime)  %}
+            {% if cond1_time < next_rising and next_rising < next_setting %}
+                {% if cond1 == 'sunny' %} night {% elif cond1 == 'partlycloudy' %} night-partly-cloudy {% else %} {{ cond1 }} {% endif %}
+            {% else %}
+                {{ cond1 }}
+            {% endif %} 
+          forecast_temperature_2: >
+            {{ hourly_forecasts[2].temperature | round }}°C
+            
+          forecast_weekday_3: >
+            {{ as_timestamp(hourly_forecasts[3].datetime) | timestamp_custom('%I') | int }}{{ as_timestamp(hourly_forecasts[3].datetime) | timestamp_custom('%p') }}   
+          forecast_condition_3: >
+            {% set cond2 = hourly_forecasts[3].condition %}
+            {% set next_setting = as_timestamp(state_attr('sun.sun', 'next_setting')) %}
+            {% set next_rising = as_timestamp(state_attr('sun.sun', 'next_rising')) %}
+            {% set cond2_time = as_timestamp(hourly_forecasts[3].datetime)  %}
+            {% if cond2_time < next_rising and next_rising < next_setting %}
+                {% if cond2 == 'sunny' %} night {% elif cond2 == 'partlycloudy' %} night-partly-cloudy {% else %} {{ cond2 }} {% endif %}
+            {% else %}
+                {{ cond2 }}
+            {% endif %} 
+          forecast_temperature_3: >
+            {{ hourly_forecasts[3].temperature | round }}°C
+
+          forecast_weekday_4: >
+            {{ as_timestamp(hourly_forecasts[4].datetime) | timestamp_custom('%I') | int }}{{ as_timestamp(hourly_forecasts[4].datetime) | timestamp_custom('%p') }}   
+          forecast_condition_4: >
+            {% set cond3 = hourly_forecasts[4].condition %}
+            {% set next_setting = as_timestamp(state_attr('sun.sun', 'next_setting')) %}
+            {% set next_rising = as_timestamp(state_attr('sun.sun', 'next_rising')) %}
+            {% set cond3_time = as_timestamp(hourly_forecasts[4].datetime)  %}
+            {% if cond3_time < next_rising and next_rising < next_setting %}
+                {% if cond3 == 'sunny' %} night {% elif cond3 == 'partlycloudy' %} night-partly-cloudy {% else %} {{ cond3 }} {% endif %}
+            {% else %}
+                {{ cond3 }}
+            {% endif %} 
+          forecast_temperature_4: >
+            {{ hourly_forecasts[4].temperature | round }}°C
+            
+
+###########################################################
+##
+##       Calendar Sensors
+##
+###########################################################
+  - trigger:
+      - platform: time_pattern
+        hours: "/1" 
+        minutes: 5       
+    action:
+      - action: calendar.get_events 
+        target:
+          entity_id: calendar.YOUR_CALENDAR_ID #REPLACE with your calendar entity id    
+        data:
+          end_date_time: "{{ (now() + timedelta(days=7)).isoformat() }}"  # Get calendar event in next 7 days
+        response_variable: agenda
+      - variables:
+          my_events: '{{ agenda["calendar.YOUR_CALENDAR_ID"].events }}' #REPLACE with your calendar entity id            
+    sensor:
+      - name: "Upcoming Calendar Events"
+        unique_id: upcoming_calendar_events
+        state: >
+          {{ my_events | length }}
+        attributes:
+          events_date_1: >
+            {% if my_events | count > 0 %}
+              {{ as_timestamp(my_events[0].start) | timestamp_custom('%m/%d') }}
+            {% else %}   {% endif %}
+          events_time_1: >
+            {% if my_events | count > 0 %}
+              {{ as_timestamp(my_events[0].start) | timestamp_custom('%H:%M') }}
+            {% else %}   {% endif %}
+          events_title_1: >
+            {% if my_events | count > 0 %}
+              {{ my_events[0].summary }}
+            {% else %}   {% endif %}
+
+          events_date_2: >
+            {% if my_events | count > 1 %}
+              {{ as_timestamp(my_events[1].start) | timestamp_custom('%m/%d') }}
+            {% else %}   {% endif %}
+          events_time_2: >
+            {% if my_events | count > 1 %}
+              {{ as_timestamp(my_events[1].start) | timestamp_custom('%H:%M') }}
+            {% else %}   {% endif %}
+          events_title_2: >
+            {% if my_events | count > 1 %}
+              {{ my_events[1].summary }}
+            {% else %}   {% endif %}
+
+          events_date_3: >
+            {% if my_events | count > 2 %}
+              {{ as_timestamp(my_events[2].start) | timestamp_custom('%m/%d') }}
+            {% else %}   {% endif %}
+          events_time_3: >
+            {% if my_events | count > 2 %}
+              {{ as_timestamp(my_events[2].start) | timestamp_custom('%H:%M') }}
+            {% else %}   {% endif %}
+          events_title_3: >
+            {% if my_events | count > 2 %}
+              {{ my_events[2].summary }}
+            {% else %}   {% endif %}
+
+          events_date_4: >
+            {% if my_events | count > 3 %}
+              {{ as_timestamp(my_events[3].start) | timestamp_custom('%m/%d') }}
+            {% else %}   {% endif %}
+          events_time_4: >
+            {% if my_events | count > 3 %}
+              {{ as_timestamp(my_events[3].start) | timestamp_custom('%H:%M') }}
+            {% else %}   {% endif %}
+          events_title_4: >
+            {% if my_events | count > 3 %}
+              {{ my_events[3].summary }}
+            {% else %}   {% endif %}
+                
+            
+            
