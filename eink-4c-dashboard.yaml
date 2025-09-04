@@ -90,7 +90,7 @@ font:
        'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
        's', 't', 'u', 'v', 'w', 'x', 'y', 'z', ' ']
 
-  - file: 'fonts/materialdesignicons-7296.ttf'
+  - file: 'fonts/materialdesignicons.ttf'
     id: icon_today
     size: 170
     glyphs: &mdi-weather-glyphs
