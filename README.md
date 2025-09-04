@@ -21,8 +21,8 @@
 
 <img src="readme_img/circuit.jpg" width="50%" />
 
-- [7.5吋四色eink電子紙](item.taobao.com/item.htm?id=809151983431) - GDEM075F52 （24Pin）
-- [24pin轉2.54pin](item.taobao.com/item.htm?id=809151983431) - C02 轉接板
+- [7.5吋四色eink電子紙](https://item.taobao.com/item.htm?id=809151983431) - GDEM075F52 （24Pin）
+- [24pin轉2.54pin](https://item.taobao.com/item.htm?id=809151983431) - C02 轉接板
 - [ESP32-S3核心板 開發板](https://item.taobao.com/item.htm?id=724415068331&skuId=5030810340877) - ESP32-S3N16R8，銲接排針（向下），無資料線，CH343P
 - [杜邦線](https://detail.tmall.com/item.htm?&id=14466195609&skuId=5922240227983) - 杜邦線21CM 母對母 2.54mm（1排40P） **可選短一點的10CM**
 - [IKEA RÖDALM 相框 13x18公分](https://www.ikea.com.tw/zh/products/wall-decoration/frames/rodalm-art-50550033) - 外框有木黑白三色，**注意裱框紙開孔較小，需要挖大**
