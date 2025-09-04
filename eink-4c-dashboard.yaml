@@ -132,7 +132,7 @@ font:
     glyphs: '°C0123456789%AMP'
 
   #forecast icon
-  - file: 'fonts/materialdesignicons-7296.ttf'
+  - file: 'fonts/materialdesignicons.ttf'
     id: icon_forecast
     size: 70
     glyphs: *mdi-weather-glyphs
