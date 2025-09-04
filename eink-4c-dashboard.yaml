@@ -148,7 +148,6 @@ font:
     id: font_event
     size: 25
     glyphs:
-      #- !include fonts/jf3500_char.yaml
       - !include fonts/jf7000_noto_characters.yaml
 
   #event date
@@ -177,10 +176,6 @@ binary_sensor:
   - platform: homeassistant
     id: eink_refresh_time
     entity_id: binary_sensor.eink_refresh_time
-
-  - platform: homeassistant
-    id: lastnight_nobody_home
-    entity_id: input_boolean.lastnight_nobody_home
 
 button:
   - platform: restart
@@ -379,9 +374,7 @@ time:
       then: 
         - if:
             condition:
-              and:
-                - binary_sensor.is_on: eink_refresh_time
-                - binary_sensor.is_off: lastnight_nobody_home
+              - binary_sensor.is_on: eink_refresh_time
             then:      
               - component.update: 'my_display'            
       
