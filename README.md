@@ -22,7 +22,7 @@
 <img src="readme_img/circuit.jpg" width="50%" />
 
 - [7.5吋四色eink電子紙](https://item.taobao.com/item.htm?id=809151983431) - GDEM075F52 （24Pin）
-- [FPC24pin轉2.54pin](https://item.taobao.com/item.htm?id=809151983431) - C02 轉接板
+- [FPC-24pins轉2.54mm-8pins](https://item.taobao.com/item.htm?id=809151983431) - C02 轉接板
 - [ESP32-S3核心板 開發板](https://item.taobao.com/item.htm?id=724415068331&skuId=5030810340877) - ESP32-S3N16R8，銲接排針（向下），無資料線，CH343P
 - [杜邦線](https://detail.tmall.com/item.htm?&id=14466195609&skuId=5922240227983) - 杜邦線21CM 母對母 2.54mm（1排40P） **可選短一點的10CM**
 - [IKEA RÖDALM 相框 13x18公分](https://www.ikea.com.tw/zh/products/wall-decoration/frames/rodalm-art-50550033) - 外框有木黑白三色，**注意裱框紙開孔較小，需要挖大**
@@ -43,8 +43,8 @@
 | GND | GND |
 | 3V3 | 3.3V |
 
-3. C02轉接板接上電子紙的FPC排線
-4. 供電與燒錄要從開發板上的`USB`才對
+3. 接好後再將C02轉接板接上電子紙的FPC排線
+4. 供電與燒錄都是從開發板上的`USB`
 
 ## 軟體安裝
 
@@ -59,73 +59,35 @@
 6. 在ESPhome將`eink_dashboard_sensor.yaml`編譯後燒錄至ESP32S3模組
 7. 等待可在HA內看到模組上線後，手動按"Screen Refresh"確認螢幕可正常顯示內容
 
-## ESPHome yaml 說明
+## 面板更新時機
 
-### 在HA內手動更新面板
+因為此型號電子紙不支援局部刷新，故不需要一直刷新，程式預設不會自動更新`update_interval: never`
 
-```YAML
-button:
-  - platform: template
-    name: '${devicename} Refresh'
-    icon: 'mdi:update'
-    on_press:
-      then:
-        - component.update: 'my_display'
-    internal: false
-```
+是直接在ESPhome內做自動化，每小時更新一次，同時當來自HA的每日定時感測器為`True`時，才會刷新一次
 
+**請先在HA內建立"每日定時感測器"輔助工具:**
 
-### 將HA的時間帶進ESPHome
+在HA設定>裝置與服務>輔助工具>新增輔助工具>"每日定時感測器">設定想要更新的時段，名稱填`eink_refresh_time`
+
+### ESPhome yaml解說:
+
+由於行事曆是在每小時5分更新，天氣預報則是每小時10分更新，所以ESPhome自動化設定成每小時15分更新一次
 
 ```YAML
 time:
   - platform: homeassistant
     id: ha_time
-```
-
-
-### 面板更新時機
-
-因為預設螢幕不會自動更新`update_interval: never`，是由HA內建自動化根據想要的間隔時間來按下更新面板按鈕
-
-自動化流程如下:
-
-#### 1. 每隔多久時間觸發一次自動化:  
-
-```YAML
-  trigger:
-    - platform: time_pattern     
-      # /1 表示每1個小時，要每2小時就寫 /2
-      hours: "/1" 
-      # 1 表示在該小時的15分時執行，如06:15、07:15、08:15
+    on_time: 
+      seconds: 0
       minutes: 15
+      hours: "/1"
+      then: 
+        - if:
+            condition:
+              - binary_sensor.is_on: eink_refresh_time
+            then:      
+              - component.update: 'my_display' 
 ```
-
-#### 2. 條件: (選填)
-
-在HA設定>裝置與服務>輔助工具>新增輔助工具>"每日定時感測器">設定想要更新的時段，名稱填`eink_refresh_time`
-
-```YAML
-  condition:
-    #在可更新的時段內才更新
-    - condition: state
-      entity_id: binary_sensor.eink_refresh_time
-      state: 'on'
-```
-
-#### 3. 動作:  
-
-```YAML
-   action:
-   #按下更新螢幕的按鈕，記得更換為自己的實體ID
-     - action: button.press
-       data:
-         entity_id: button.eink_4c_dashboard_screen_refresh
-```
-
-自動化設定完記得至開發工具>YAML>檢查設定
-
-確定都對後在`YAML 設定新載入中`按下`自動化`重新載入自動化才會生效
 
 ## HA template sensor 說明 
 
@@ -192,7 +154,7 @@ time:
 
 要注意更新面板的時機要在更新之後，不然都會看到前一個小時的內容
 
-`attributes`是將要使用的資訊從天氣預報拆分成出來，分別是:
+`attributes`是將要使用的資訊從行事曆拆分成出來，如果沒有則會顯示空白，分別是:
 - 最近四筆行事曆的日期:  `events_date_1`, `events_date_2`, `events_date_3`, `events_date_4`
 - 最近四筆行事曆的時間:  `events_time_1`, `events_time_2`, `events_time_3`, `events_time_4`
 - 最近四筆行事曆的標題:  `events_title_1`, `events_title_2`, `events_title_3`, `events_title_4`
