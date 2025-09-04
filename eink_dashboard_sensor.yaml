@@ -1,3 +1,5 @@
+#REPLACE with your Weather entity id in line 16, 21, 27
+#REPLACE with your Calendar entity id in line 115, 120
 ###########################################################
 ##
 ##       Weather Forecast Sensors
