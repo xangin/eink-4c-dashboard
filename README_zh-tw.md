@@ -1,5 +1,7 @@
 # ESPHome E-ink 4 colors dashboard
 
+[English](README.md) | 正體中文
+
 感謝[tsunglung](https://github.com/tsunglung/esphome_epaper)開發此專案用的四色電子紙ESPhome component
 
 本專案利用 7.5 吋四色電子紙搭配 ESPHome 與 Home Assistant，在指定的時段內固定會自動更新，以顯示天氣預報與行事曆。
