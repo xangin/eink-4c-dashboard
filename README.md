@@ -91,9 +91,9 @@ time:
 
 ## HA template sensor 說明 
 
-**要先確認在已經將以下程式碼寫在`configuration.yaml`內，這樣`eink_dashboard_sensor.yaml`檔案放進去才會生效**
+**要先確認在已經將以下程式碼寫在`configuration.yaml`內，這樣`eink_dashboard_sensor.yaml`檔案在`packages`資料夾內才會生效**
 
-![](https://user-images.githubusercontent.com/56766371/184566430-d2dff49b-38cd-4ddd-a775-eaadf7099fc1.png)
+<img src="https://github.com/user-attachments/assets/8f80e777-7958-4027-87f4-2ae585448135" />
 
 此template sensor是將想要的資料格式化後再丟給資訊面板顯示，內容包含兩部分一個是天氣預報，一個是取得最近7日內四筆行事曆的標題
 
