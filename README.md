@@ -22,7 +22,7 @@
 <img src="readme_img/circuit.jpg" width="50%" />
 
 - [7.5吋四色eink電子紙](https://item.taobao.com/item.htm?id=809151983431) - GDEM075F52 （24Pin）
-- [24pin轉2.54pin](https://item.taobao.com/item.htm?id=809151983431) - C02 轉接板
+- [FPC24pin轉2.54pin](https://item.taobao.com/item.htm?id=809151983431) - C02 轉接板
 - [ESP32-S3核心板 開發板](https://item.taobao.com/item.htm?id=724415068331&skuId=5030810340877) - ESP32-S3N16R8，銲接排針（向下），無資料線，CH343P
 - [杜邦線](https://detail.tmall.com/item.htm?&id=14466195609&skuId=5922240227983) - 杜邦線21CM 母對母 2.54mm（1排40P） **可選短一點的10CM**
 - [IKEA RÖDALM 相框 13x18公分](https://www.ikea.com.tw/zh/products/wall-decoration/frames/rodalm-art-50550033) - 外框有木黑白三色，**注意裱框紙開孔較小，需要挖大**
@@ -48,15 +48,15 @@
 
 ## 軟體安裝
 
-1. 將`/fonts`資料夾內的檔案及`eink-4c-dashboard.yaml`放到HA/config/esphome的資料夾內
-2. 將`eink_dashboard_sensor.yaml`放到HA/config/packages內 >> [詳細說明](#ha-template-sensor-說明)
-3. 將`/images`內的`bg_4c.png`放到HA/config/esphome/images的資料夾內
-4. 將`eink-4c-dashboard.yaml`及`eink_dashboard_sensor.yaml`的內容修改成自己HA裡的實體ID，**解說在下方**
+1. 將`/fonts`資料夾內的檔案及`eink-4c-dashboard.yaml`放到homeassistant/esphome的資料夾內
+2. 將`eink_dashboard_sensor.yaml`放到homeassistant/packages內
+3. 將`eink_dashboard_sensor.yaml`的內容修改成自己HA裡的實體ID，>> [詳細說明](#ha-template-sensor-說明)
+4. 將`/images`內的`bg_4c.png`放到homeassistant/esphome/images的資料夾內
 5. HA檢查YAML code有無錯誤
     1. 開發工具>YAML>檢查設定內容，確認左下角通知沒有出現錯誤
     2. YAML 設定新載入中>模板實體
-    3. 開發工具>狀態>檢查`sensor.eink_sensors`及`sensor.upcoming_calendar_events`有確實出現，以及內容是自己想要的
-6. 在ESPhome將`eink_dashboard_sensor.yaml`燒錄至ESP32S3模組
+    3. 開發工具>狀態>檢查`sensor.eink_sensors`及`sensor.upcoming_calendar_events`有確實出現，以及內容是正確的
+6. 在ESPhome將`eink_dashboard_sensor.yaml`編譯後燒錄至ESP32S3模組
 7. 等待可在HA內看到模組上線後，手動按"Screen Refresh"確認螢幕可正常顯示內容
 
 ## ESPHome yaml 說明
@@ -101,9 +101,9 @@ time:
       minutes: 15
 ```
 
-#### 2. 條件: 
+#### 2. 條件: (選填)
 
-在HA設定>裝置與服務>助手>新增助手>"每日定時感測器">設定想要更新的時段，名稱填`eink_refresh_time`
+在HA設定>裝置與服務>輔助工具>新增輔助工具>"每日定時感測器">設定想要更新的時段，名稱填`eink_refresh_time`
 
 ```YAML
   condition:
@@ -133,7 +133,7 @@ time:
 
 ![](https://user-images.githubusercontent.com/56766371/184566430-d2dff49b-38cd-4ddd-a775-eaadf7099fc1.png)
 
-此template sensor是將想要的資料格式化後再丟給資訊面板顯示，內容包含兩部分一個是天氣預報，一個是取得最近7日的行事曆標題
+此template sensor是將想要的資料格式化後再丟給資訊面板顯示，內容包含兩部分一個是天氣預報，一個是取得最近7日內四筆行事曆的標題
 
 ### 天氣預報:
 
@@ -164,7 +164,6 @@ time:
 
 `attributes`是將要使用的資訊從天氣預報拆分成出來，分別是:
 - 這小時的氣溫:  `today_temperature`
-- 這小時的濕度:  `today_humidity`
 - 這小時的降雨機率:  `today_precipitation`
 - 未來四小時的時間:  `forecast_weekday_1`, `forecast_weekday_2`, `forecast_weekday_3`, `forecast_weekday_4`
 - 未來四小時的天氣圖示:  `forecast_condition_1`, `forecast_condition_2`, `forecast_condition_3`, `forecast_condition_4`
