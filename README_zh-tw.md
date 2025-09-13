@@ -58,7 +58,7 @@
     1. 開發工具>YAML>檢查設定內容，確認左下角通知沒有出現錯誤
     2. YAML 設定新載入中>模板實體
     3. 開發工具>狀態>檢查`sensor.eink_sensors`及`sensor.upcoming_calendar_events`有確實出現，以及內容是正確的
-6. 在ESPhome將`eink_dashboard_sensor.yaml`編譯後燒錄至ESP32S3模組
+6. 在ESPhome Builder內將`eink-4c-dashboard.yaml`編譯後燒錄至ESP32S3模組
 7. 等待可在HA內看到模組上線後，手動按"Screen Refresh"確認螢幕可正常顯示內容
 
 ## 面板更新時機
