@@ -74,7 +74,7 @@ font:
        'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
        's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
-  - file: 'fonts/GothamRnd-Book.ttf'
+  - file: 'fonts/GenJyuuGothic-Regular.ttf'
     id: font_day
     size: 110
     glyphs:
@@ -92,7 +92,7 @@ font:
 
   - file: 'fonts/materialdesignicons.ttf'
     id: icon_today
-    size: 170
+    size: 163
     glyphs: &mdi-weather-glyphs
       - "\U000F0590" # mdi-weather-cloudy
       - "\U000F0F2F" # mdi-weather-cloudy-alert
@@ -412,7 +412,7 @@ display:
         it.strftime(320, 45, id(font_month), id(color_white), TextAlign::TOP_RIGHT, "%b", id(ha_time).now());
 
         // day
-        it.strftime(322, 50, id(font_day), id(color_red), TextAlign::TOP_LEFT, "%d", id(ha_time).now());
+        it.strftime(330, 22, id(font_day), id(color_red), TextAlign::TOP_LEFT, "%d", id(ha_time).now());
 
         // weekday
         it.strftime(310, 117, id(font_weekday), id(color_yellow), TextAlign::TOP_RIGHT, "%A", id(ha_time).now());
@@ -458,7 +458,7 @@ display:
         char temp[256];
 
         // icon
-        it.printf(30, 190, id(icon_today), id(color_black), TextAlign::TOP_LEFT, "%s", weather_icon_map[id(today_weather).state.c_str()].c_str());
+        it.printf(35, 193, id(icon_today), id(color_black), TextAlign::TOP_LEFT, "%s", weather_icon_map[id(today_weather).state.c_str()].c_str());
         
         // temp
         if (atoi(id(today_temperature).state.c_str()) >= 30)
