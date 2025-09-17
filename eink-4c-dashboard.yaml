@@ -613,7 +613,7 @@ display:
         
             if (is_today) {
               int rect_x1 = x;
-              int rect_y1 = y-5;
+              int rect_y1 = y+5;
               int rect_x2 = calendar_width / 7;   
               int rect_y2 = font_size+5;
               it.filled_rectangle(rect_x1, rect_y1, rect_x2, rect_y2, id(color_red));
