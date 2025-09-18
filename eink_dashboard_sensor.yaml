@@ -1,5 +1,5 @@
 #REPLACE with your Weather entity id in line 16, 21, 27
-#REPLACE with your Calendar entity id in line 115, 120
+#REPLACE with your Calendar entity id in line 113, 118
 ###########################################################
 ##
 ##       Weather Forecast Sensors
@@ -34,8 +34,6 @@ template:
         attributes: 
           today_temperature: >
             {{ hourly_forecasts[0].temperature | round }}°C
-          today_humidity: >
-            {{ hourly_forecasts[0].humidity }}%
           today_precipitation: >
             {{ hourly_forecasts[0].precipitation_probability | round }}%        
           
