@@ -6,6 +6,7 @@ esphome:
   name: ${devicename}
   friendly_name: ${upper_devicename}
   comment: ${upper_devicename}
+  min_version: 2025.9.0
   platformio_options:
     build_flags: "-DBOARD_HAS_PSRAM"
     board_build.arduino.memory_type: qio_opi
@@ -164,7 +165,7 @@ font:
 
 #Include Background
 image:
-  - file: "bg_4c.png"
+  - file: "images/bg_4c.png"
     id: eink_pannel
     type: RGB565
 
