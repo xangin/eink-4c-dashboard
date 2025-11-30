@@ -598,15 +598,32 @@ display:
           } else if (month == 4 || month == 6 || month == 9 || month == 11) {
             days_in_month = 30;
           }
+
+          // --- 預先計算本月需要的總週數 ---
+          // 總格子數 = 前面空白的天數 (start_day) + 本月實際天數
+          int total_slots = start_day + days_in_month;
+          // 計算需要幾行 (無條件進位)
+          int total_weeks = (total_slots + 6) / 7;
+
+          int row_spacing = 10; // 預設間距
+        
+          // 如果週數超過 5 (即 6 週)，將間距減少 3
+          if (total_weeks > 5) {
+            row_spacing = 7; 
+          }
         
           int row = 0;
           int col = start_day;
-          int row_spacing = 10;
+
 
           for (int d = 1; d <= days_in_month; d++) {
             int x = origin_x + col * (calendar_width / 7);
             int y = origin_y + (row + 2) * (font_size + row_spacing);
-
+            
+            if(d<10)
+            {
+              x+=2;
+            }
 
             bool is_today = (d == today);
             bool is_saturday = (col == 6);
